@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.jndi.JndiObjectFactoryBean;
 
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -23,7 +22,7 @@ public class WebRootConfig {
 
     @Bean(destroyMethod = "close")
     @Scope("request")
-    public Connection connection(DataSource dataSource) throws NamingException, SQLException {
+    public Connection connection(DataSource dataSource) throws SQLException {
         return dataSource.getConnection();
     }
 
