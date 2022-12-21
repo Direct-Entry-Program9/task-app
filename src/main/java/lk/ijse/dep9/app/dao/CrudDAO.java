@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface CrudDAO<T extends SuperEntity, ID extends Serializable> extends SuperDAO{
 
-    T save(T t) throws SQLException;
+    T save(T t);
     void update(T t);
     void deleteById(ID pk);
     Optional<T> findById(ID pk);

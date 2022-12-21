@@ -7,6 +7,9 @@ import lk.ijse.dep9.app.entity.Project;
 import lk.ijse.dep9.app.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -17,91 +20,61 @@ import java.util.Optional;
 @Component
 public class ProjectDAOImpl implements ProjectDAO {
 
-    @Autowired
-    private Connection connection;
+
+    private final JdbcTemplate jdbc;
+
+    public ProjectDAOImpl(JdbcTemplate jdbc) {
+        this.jdbc = jdbc;
+    }
 
     @Override
     public Project save(Project project) {
-        try {
-            PreparedStatement stm = connection.prepareStatement("INSERT INTO Project (name, username) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbc.update(con -> {
+            PreparedStatement stm = con.prepareStatement("INSERT INTO Project (name, username) VALUES (?,?)");
             stm.setString(1, project.getName());
             stm.setString(2, project.getUsername());
-            stm.executeUpdate();
-            ResultSet rst = stm.getGeneratedKeys();
-            rst.next();
-            project.setId(rst.getInt(1));
-            return project;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+            return stm;
+        }, keyHolder);
+        project.setId(keyHolder.getKey().intValue());
+        return project;
     }
 
     @Override
     public void update(Project project) {
-        try {
-            PreparedStatement stm = connection.prepareStatement("UPDATE Project SET name=? AND username=? WHERE id=?");
-            stm.setString(1,project.getName());
-            stm.setString(2,project.getUsername());
-            stm.setInt(3,project.getId());
-            stm.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+
+        jdbc.update("UPDATE Project SET name=? AND username=? WHERE id=?",
+                project.getName(),
+                project.getUsername(),
+                project.getId());
     }
 
     @Override
     public void deleteById(Integer pk) {
-        try {
-            PreparedStatement stm = connection.prepareStatement("DELETE FROM Project WHERE id=?");
-            stm.setInt(1,pk);
-            stm.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+
+        jdbc.update("DELETE FROM Project WHERE id=?",pk);
     }
 
     @Override
     public Optional<Project> findById(Integer pk) {
 
-        try {
-            PreparedStatement stm = connection.prepareStatement("SELECT * FROM Project WHERE id=?");
-            stm.setInt(1,pk);
-            ResultSet rst = stm.executeQuery();
-            if (rst.next()){
-                return Optional.of(new Project(rst.getInt("id"),rst.getString("name"),rst.getString("username")));
-            }
-
-            return Optional.empty();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return Optional.ofNullable(jdbc.query("SELECT * FROM Project WHERE id=?", rst->{
+            return new Project(rst.getInt("id"),rst.getString("name"),rst.getString("username"));
+        },pk));
     }
 
     @Override
     public List<Project> findAll() {
-        try {
-            List<Project> projectList = new ArrayList<>();
-            PreparedStatement stm = connection.prepareStatement("SELECT * FROM Project");
-            ResultSet rst = stm.executeQuery();
-            while (rst.next()){
-                projectList.add(new Project(rst.getInt("id"),rst.getString("name"),rst.getString("username")));
-            }
-            return projectList;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+
+        return jdbc.query("SELECT * FROM Project",(rst, rowNum) ->
+            new Project(rst.getInt("id"),rst.getString("name"),rst.getString("username")));
+
     }
 
     @Override
     public long count() {
-        try {
-            PreparedStatement stm = connection.prepareStatement("SELECT COUNT(id) FROM Project");
-            ResultSet rst = stm.executeQuery();
-            rst.next();
-            return rst.getLong(1);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+
+        return jdbc.queryForObject("SELECT COUNT(id) FROM Project",Long.class);
     }
 
     @Override
@@ -111,17 +84,9 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     @Override
     public List<Project> findAllProjectsByUsername(String username) {
-        try {
-            List<Project> projectList = new ArrayList<>();
-            PreparedStatement stm = connection.prepareStatement("SELECT * FROM Project WHERE username=?");
-            stm.setString(1,username);
-            ResultSet rst = stm.executeQuery();
-            while (rst.next()){
-                projectList.add(new Project(rst.getInt("id"),rst.getString("name"),rst.getString("username")));
-            }
-            return projectList;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+
+        return jdbc.query("SELECT * FROM Project WHERE username=?",((rst, rowNum) ->
+                new Project(rst.getInt("id"),rst.getString("name"),rst.getString("username"))
+                ),username);
     }
 }
