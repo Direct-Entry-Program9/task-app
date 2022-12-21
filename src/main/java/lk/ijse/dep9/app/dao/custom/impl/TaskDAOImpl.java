@@ -2,22 +2,26 @@ package lk.ijse.dep9.app.dao.custom.impl;
 
 import lk.ijse.dep9.app.dao.custom.TaskDAO;
 import lk.ijse.dep9.app.dao.custom.UserDAO;
+import lk.ijse.dep9.app.dao.util.ConnectionUtil;
 import lk.ijse.dep9.app.entity.Project;
 import lk.ijse.dep9.app.entity.Task;
 import lk.ijse.dep9.app.entity.User;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.tags.EscapeBodyTag;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+@Component
+@Scope("request")
 public class TaskDAOImpl implements TaskDAO {
 
     private final Connection connection;
 
-    public TaskDAOImpl(Connection connection) {
-        this.connection = connection;
+    public TaskDAOImpl() {
+        this.connection = ConnectionUtil.getConnection();
     }
 
 
