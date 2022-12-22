@@ -18,6 +18,9 @@ public class Transformer {
     public User toUser(UserDTO userDTO){
         return mapper.map(userDTO,User.class);
     }
+    public UserDTO toUserDTO(User user){
+        return mapper.map(user,UserDTO.class);
+    }
 
 
 }

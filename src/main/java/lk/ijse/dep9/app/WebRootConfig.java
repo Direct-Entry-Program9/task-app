@@ -2,6 +2,7 @@ package lk.ijse.dep9.app;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,11 +15,10 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 @Configuration
 @EnableTransactionManagement
+@ComponentScan
 public class WebRootConfig {
     @Bean
     public JndiObjectFactoryBean dataSource(){

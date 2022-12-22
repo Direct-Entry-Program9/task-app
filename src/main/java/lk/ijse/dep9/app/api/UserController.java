@@ -33,6 +33,7 @@ public class UserController {
 //        if (firstError.isPresent()){
 //            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,firstError.get().getDefaultMessage());
 //        }
+        System.out.println("Here");
         userService.createNewUserAccount(user);
     }
 
@@ -43,9 +44,8 @@ public class UserController {
     }
 
     @GetMapping(value = "/me", produces = "application/json")
-    public UserDTO getUserAccountDetails(){
-        System.out.println("getUserAccountDetails()");
-        return new UserDTO();
+    public UserDTO getUserAccountDetails(@RequestAttribute String username){
+        return userService.getUserAccountDetails(username);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -9,4 +9,8 @@ public interface UserService extends SuperService {
 
     void createNewUserAccount(UserDTO userDTO) throws SQLException;
 
+    UserDTO verifyUser(String username, String password);
+
+    UserDTO getUserAccountDetails(String username);
+
 }

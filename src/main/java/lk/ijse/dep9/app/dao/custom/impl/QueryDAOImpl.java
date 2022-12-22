@@ -13,9 +13,9 @@ import java.sql.Connection;
 public class QueryDAOImpl implements QueryDAO {
 
 
-    private final JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbc;
 
-    public QueryDAOImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public QueryDAOImpl(JdbcTemplate jdbc) {
+        this.jdbc = jdbc;
     }
 }
