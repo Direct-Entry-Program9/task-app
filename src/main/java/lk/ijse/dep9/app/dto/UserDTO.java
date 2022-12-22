@@ -1,5 +1,6 @@
 package lk.ijse.dep9.app.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lk.ijse.dep9.app.util.ValidationGroup;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Null;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 @Data
@@ -20,8 +22,14 @@ public class UserDTO implements Serializable {
     @Pattern(regexp = "^[A-Za-z ]+$", message = "Invalid name")
     private String fullName;
     @NotBlank(message = "username can't be empty or null", groups = ValidationGroup.Create.class)
+    @Null(groups = ValidationGroup.Update.class, message = "Username cannot be updated")
     private String username;
     @NotEmpty(message = "Password can't be empty or null")
     @Length(min = 3, message = "Password should be at least 3 characters long")
     private String password;
+
+//    @JsonIgnore
+//    public String getPassword() {
+//        return password;
+//    }
 }
