@@ -22,7 +22,7 @@ public class ProjectController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = "application/json", produces = "application/json")
-    private ProjectDTO createNewProject(@Validated(ValidationGroup.Create.class) ProjectDTO projectDTO,
+    private ProjectDTO createNewProject(@Validated(ValidationGroup.Create.class) @RequestBody ProjectDTO projectDTO,
                                         @RequestAttribute String username){
         projectDTO.setUsername(username);
         return projectTaskService.createNewProject(projectDTO);
@@ -43,7 +43,7 @@ public class ProjectController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping(value = "/{projectId:\\d+}")
     public void renameProject(@PathVariable int projectId ,
-                                @RequestBody ProjectDTO project,
+                                @Validated @RequestBody ProjectDTO project,
                               @RequestAttribute String username){
         project.setId(projectId);
         project.setUsername(username);
