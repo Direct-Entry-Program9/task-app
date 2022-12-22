@@ -3,17 +3,11 @@ package lk.ijse.dep9.app.api;
 import lk.ijse.dep9.app.dto.UserDTO;
 import lk.ijse.dep9.app.service.custom.UserService;
 import lk.ijse.dep9.app.util.ValidationGroup;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import javax.validation.Valid;
 import java.sql.SQLException;
-import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -52,8 +46,8 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/me")
-    public void deleteUserAccount(){
-        System.out.println("deleteUserAccount()");
+    public void deleteUserAccount(@RequestAttribute String username){
+        userService.deleteUserAccount(username);
     }
 
 }
